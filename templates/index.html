@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Home</title>
+    </head>
+    <body>
+        <form action="/chat" method="post">
+            <div style="padding: 20px; color: black">
+                <h4>이메일 입력후 채팅하기를 눌러주세요.</h4>
+                <input
+                    style="width: 240px; padding: 10px; color: black"
+                    type="text"
+                    placeholder="email"
+                    name="email"
+                    id="email"
+                    required
+                />
+                <input
+                    style="
+                        background-color: grey;
+                        color: #fff;
+                        border: none;
+                        padding: 10px;
+                    "
+                    type="submit"
+                    value="채팅하기"
+                />
+            </div>
+        </form>
+    </body>
+</html>

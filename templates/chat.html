@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chat</title>
+
+        <style>
+            body {
+                padding-top: 10px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            #chatBox {
+                width: 420px;
+                height: 600px;
+                background-color: black;
+                display: flex;
+                padding: 14px;
+                flex-direction: column;
+                overflow: auto;
+            }
+            .chat {
+                padding-top: 14px;
+                display: flex;
+                justify-content: right;
+                align-items: center;
+                color: white;
+                width: 400px;
+                word-break: break-word;
+            }
+            .content {
+                width: 80%;
+                padding: 12px;
+                color: black;
+            }
+            .btn_sb {
+                background-color: grey;
+                color: #fff;
+                border: none;
+                padding: 15px;
+                width: 20%;
+            }
+            .main {
+                padding-top: 2px;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: 2px;
+                align-items: center;
+            }
+            .time {
+                color: grey;
+                font-size: 12px;
+                padding-left: 10px;
+            }
+            .email {
+                color: black;
+                font-weight: bold;
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <div class="email" id="email" value="">
+                {{ emailvalue }}
+                <input id="outbtn" type="button" value="나가기" />
+            </div>
+
+            <div id="chatBox">
+                <div class="chat"></div>
+            </div>
+
+            <form>
+                <div class="main">
+                    <input
+                        type="text"
+                        class="content"
+                        name="message"
+                        id="message"
+                    />
+                    <input class="btn_sb" type="submit" value="send" />
+                </div>
+            </form>
+        </div>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+        <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+        <script type="text/javascript">
+            var time = new Date().toLocaleTimeString();
+            const chatBox = document.querySelector("#chatBox");
+            var socket = io.connect(
+                "http://" + document.domain + ":" + location.port
+            );
+            socket.on("connect", function () {
+                console.log("Connected to the server");
+                socket.emit("event", { data: "Connect" });
+
+                var form = $("form").on("submit", (e) => {
+                    e.preventDefault();
+                    let message = $("#message").val();
+                    time = new Date().toLocaleTimeString();
+
+                    socket.emit("event", {
+                        message: message,
+                        time: time,
+                    });
+                    $("#message").val("").focus();
+                });
+            });
+            socket.on("response", (msg) => {
+                if (msg.message === "") {
+                    //$(".chat").append(`<p>${msg.message}</p>`);
+                } else {
+                    const div = document.createElement("div");
+                    div.className = "chat";
+                    div.innerHTML = ` ${msg.message} <p class='time'>${time}</p>`;
+                    chatBox.appendChild(div);
+                    chatBox.scrollTop = 1e9;
+                }
+            });
+
+            $("#outbtn").on("click", function () {
+                socket.emit("event", { data: "Disconnect" });
+                location.href = "/";
+            });
+        </script>
+    </body>
+</html>
